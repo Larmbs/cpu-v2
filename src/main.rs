@@ -83,10 +83,14 @@ fn main() {
     let rom = ProgROM::from([016; 64]); // Replace this with program values
 
     // Registers
+    /* Private */
     let mut prog_cnt: u16 = 0; // Program counter, tells computer what instruction to read
-    let mut alu_a: u16 = 0; // The A value to be passed into the ALU
-    let mut alu_b: u16 = 0; // The B value to be passed into the ALU
-    let mut alu_o: u16 = 0; // The output register of ALU
+    /* Public */
+    let alu_a: u16 = 0; // The A value to be passed into the ALU
+    let alu_b: u16 = 0; // The B value to be passed into the ALU
+    let alu_o: u16 = 0; // The output register of ALU
+    // Putting all regs in one array to make things simpler to visualize
+    let mut regs = [alu_a, alu_b, alu_o];
 
     // Looping over and over
     loop {
@@ -98,9 +102,50 @@ fn main() {
 
         match opcode {
             0..=7 => {
-                // ALU operations
-                alu_o = ALU::exec(opcode as u8, alu_a, alu_b);
+                // ALU operation
+                regs[2] = ALU::exec(opcode as u8, regs[0], regs[1]);
             },
+            8 => {
+                // Load operation
+
+                // Bit-masking out args
+                let addr = (instr & 0b1111_1111) as usize; // First 8 bits is addr
+                let reg = ((instr & 0b1111_0000_0000) >> 8) as usize; // Middle 4 bits is reg addr
+
+                regs[reg] = ram.read(addr);
+            },
+            9 => {
+                // Store operation
+
+                // Bit-masking out args
+                let addr = (instr & 0b1111_1111) as usize; // First 8 bits is addr
+                let reg = ((instr & 0b1111_0000_0000) >> 8) as usize; // Middle 4 bits is reg addr
+
+                ram.write(addr, regs[reg]);
+            },
+            10 => {
+                // Move instruction
+
+                // Bit-masking out args
+                let reg_copy = ((instr & 0b1111_0000_0000) >> 8) as usize;
+                let reg_recv = ((instr & 0b1111_0000) >> 4) as usize;
+
+                regs[reg_recv] = regs[reg_copy];
+            },
+            11 => {
+                // Jump instruction
+
+                // Bit-masking jump value
+                let jump_size = instr & 0b0111_1111_1111;
+                let jump_sign = (instr & 0b1000_0000_0000) >> 11;
+
+                // Jumping in different direction depending on jump sign
+                match jump_sign {
+                    0 => prog_cnt += jump_size,
+                    1 => prog_cnt -= jump_size,
+                    _ => will_never_happen()
+                }
+            }
             _ => will_never_happen(),
         }
         
