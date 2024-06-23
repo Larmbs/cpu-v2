@@ -92,9 +92,12 @@ fn main() {
     let alu_b: u16 = 0; // The B value to be passed into the ALU
     let alu_o: u16 = 0; // The output register of ALU
     let flags: u16 = 0; // Register with a multitude of flags
-    let gpr: u16 = 0;   // General purpose register no unique use
+    let gpr1: u16 = 0;  // General purpose register no unique use
+    let gpr2: u16 = 0;  // General purpose register no unique use
+    let gpr3: u16 = 0;  // General purpose register no unique use
+
     // Putting all regs in one array to make things simpler to visualize
-    let mut regs = [0, alu_a, alu_b, alu_o, flags, gpr];
+    let mut regs = [0, alu_a, alu_b, alu_o, flags, gpr1, gpr2, gpr3];
 
     // Looping over and over
     loop {
@@ -131,8 +134,8 @@ fn main() {
                 // MOVE instruction
 
                 // Bit-masking out args
-                let reg_copy = ((instr & 0b1111_0000_0000) >> 8) as usize;
-                let reg_recv = ((instr & 0b1111_0000) >> 4) as usize;
+                let reg_copy = ((instr & 0b1111_0000) >> 8) as usize;
+                let reg_recv = ((instr & 0b1111) >> 4) as usize;
 
                 regs[reg_recv] = regs[reg_copy];
             },

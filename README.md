@@ -10,8 +10,9 @@ Prog_CNT
 - ALU_B
 - ALU_O
 - FLAGS
-- GPR
-
+- GPR1
+- GPR2
+- GPR3
 
 ## Instruction Set
 | Done | Name | Explanation
