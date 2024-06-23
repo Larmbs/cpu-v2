@@ -1,4 +1,6 @@
 # Drone Boi Computer 0.2.0
+A computer built to be made in DroneBoi with a simple architecture and instruction set
+
 ## Registers
 ### Private
 Prog_CNT
@@ -7,6 +9,9 @@ Prog_CNT
 - ALU_A
 - ALU_B
 - ALU_O
+- FLAGS
+- GPR
+
 
 ## Instruction Set
 | Done | Name | Explanation
@@ -16,7 +21,7 @@ Prog_CNT
 |X|Load|Moves a value from RAM to register
 |X|ALU|Operates on values in the A and B registers
 |X|Move|Moves values between registers
-| |LOAD IMD| Moves a value imediatly into a reg
+|X|LOAD IMD| Moves a value imediatly into a reg
 
 ## Opcode Distribution
 There is a 4 bit opcode so here is the distribution of instructions
