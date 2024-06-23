@@ -69,7 +69,7 @@ impl ALU {
             3 => !a,     // NOT
             4 => a ^ b,  // XOR
             5 => a | b,  // OR
-            6 => a - b,  // Addition
+            6 => a + b,  // Addition
             7 => a - b,  // Subtraction
             8 => (a > b) as u16,
             9 => (a == b) as u16,
@@ -162,6 +162,10 @@ fn main() {
 
                 regs[reg] = value;
                 
+            },
+            15 => {
+                // HALT Instruction
+                break;
             },
             _ => will_never_happen(),
         }

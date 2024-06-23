@@ -22,6 +22,7 @@ Prog_CNT
 |X|ALU|Operates on values in the A and B registers
 |X|Move|Moves values between registers
 |X|LOAD IMD| Moves a value imediatly into a reg
+|X|Halt| Stops CPU from running
 
 ## Opcode Distribution
 There is a 4 bit opcode so here is the distribution of instructions
@@ -33,4 +34,5 @@ There is a 4 bit opcode so here is the distribution of instructions
 |12|Move| Move value between registers
 |13|Jump| Jumps progcounter by some value
 |14|LOAD IMD| Loads a predefined 12 bit number into a reg
+|15|HALT| 
 
