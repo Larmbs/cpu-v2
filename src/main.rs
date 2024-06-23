@@ -25,7 +25,7 @@ impl RAM {
 }
 
 /// Program ROM Storage
-/// -----------
+/// -------------------
 /// This storage is solely meant for program memory and will store
 /// the entirety of the program
 /// This follows the Harvard Architecture https://en.wikipedia.org/wiki/Harvard_architecture
@@ -57,20 +57,22 @@ impl ALU {
     /// This will return unexpected values when overflow occurs
     fn exec(mode: u8, a: u16, b: u16) -> u16 {
         assert!(
-            mode < 2u8.pow(3),
-            "Mode provided was invalid, modes go from 0 to {}",
-            2u8.pow(3)
+            mode < 10,
+            "Mode provided was invalid, modes go from 0 to {} exclusive",
+            10
         );
 
         match mode {
-            0b000 => a << b, // Left Shift
-            0b001 => a >> b, // Right Shift
-            0b010 => a & b,  // AND
-            0b011 => !a,     // NOT
-            0b100 => a ^ b,  // XOR
-            0b101 => a | b,  // OR
-            0b110 => a - b,  // Addition
-            0b111 => a - b,  // Subtraction
+            0 => a << b, // Left Shift
+            1 => a >> b, // Right Shift
+            2 => a & b,  // AND
+            3 => !a,     // NOT
+            4 => a ^ b,  // XOR
+            5 => a | b,  // OR
+            6 => a - b,  // Addition
+            7 => a - b,  // Subtraction
+            8 => (a > b) as u16,
+            9 => (a == b) as u16,
             _ => will_never_happen(),
         }
     }
@@ -89,8 +91,9 @@ fn main() {
     let alu_a: u16 = 0; // The A value to be passed into the ALU
     let alu_b: u16 = 0; // The B value to be passed into the ALU
     let alu_o: u16 = 0; // The output register of ALU
+    let flags: u16 = 0; // Register with a multitude of flags
     // Putting all regs in one array to make things simpler to visualize
-    let mut regs = [alu_a, alu_b, alu_o];
+    let mut regs = [0, alu_a, alu_b, alu_o, flags];
 
     // Looping over and over
     loop {
@@ -101,12 +104,12 @@ fn main() {
         let opcode: u8 = ((instr & 0b1111_0000_0000_0000) >> 12) as u8;
 
         match opcode {
-            0..=7 => {
+            0..=9 => {
                 // ALU operation
-                regs[2] = ALU::exec(opcode as u8, regs[0], regs[1]);
+                regs[3] = ALU::exec(opcode as u8, regs[1], regs[2]);
             },
-            8 => {
-                // Load operation
+            10 => {
+                // LOAD operation
 
                 // Bit-masking out args
                 let addr = (instr & 0b1111_1111) as usize; // First 8 bits is addr
@@ -114,8 +117,8 @@ fn main() {
 
                 regs[reg] = ram.read(addr);
             },
-            9 => {
-                // Store operation
+            11 => {
+                // STORE operation
 
                 // Bit-masking out args
                 let addr = (instr & 0b1111_1111) as usize; // First 8 bits is addr
@@ -123,8 +126,8 @@ fn main() {
 
                 ram.write(addr, regs[reg]);
             },
-            10 => {
-                // Move instruction
+            12 => {
+                // MOVE instruction
 
                 // Bit-masking out args
                 let reg_copy = ((instr & 0b1111_0000_0000) >> 8) as usize;
@@ -132,20 +135,33 @@ fn main() {
 
                 regs[reg_recv] = regs[reg_copy];
             },
-            11 => {
-                // Jump instruction
+            13 => {
+                // JUMP instruction
+                let flag = regs[4] & 1;
 
                 // Bit-masking jump value
                 let jump_size = instr & 0b0111_1111_1111;
                 let jump_sign = (instr & 0b1000_0000_0000) >> 11;
 
-                // Jumping in different direction depending on jump sign
-                match jump_sign {
-                    0 => prog_cnt += jump_size,
-                    1 => prog_cnt -= jump_size,
-                    _ => will_never_happen()
+                // Jumps if flag is true
+                if flag == 1 {
+                    // Jumping in different direction depending on jump sign
+                    match jump_sign {
+                        0 => prog_cnt += jump_size,
+                        1 => prog_cnt -= jump_size,
+                        _ => will_never_happen()
+                    }
                 }
-            }
+            },
+            14 => {
+                // LOAD IMD instruction
+                // 8 bit constant value
+                let value = instr & 0b1111_1111;
+                let reg = (instr & 0b1111_0000_0000) as usize;
+
+                regs[reg] = value;
+                
+            },
             _ => will_never_happen(),
         }
         

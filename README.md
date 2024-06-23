@@ -3,9 +3,10 @@
 ### Private
 Prog_CNT
 ### Public
-ALU_A
-ALU_B
-ALU_O
+- Zero
+- ALU_A
+- ALU_B
+- ALU_O
 
 ## Instruction Set
 | Done | Name | Explanation
@@ -15,14 +16,16 @@ ALU_O
 |X|Load|Moves a value from RAM to register
 |X|ALU|Operates on values in the A and B registers
 |X|Move|Moves values between registers
+| |LOAD IMD| Moves a value imediatly into a reg
 
 ## Opcode Distribution
 There is a 4 bit opcode so here is the distribution of instructions
 |Range|Label|Instructions|
 |-----|-----|------------|
-|0..7|ALU|(Add, Sub, stl, str, or, and, not, xor) |
-|8|Load| Load from RAM to reg
-|9|Store| Store value from reg to RAM
-|10|Move| Move value between registers
-|11|Jump| Jumps progcounter by some value
+|0..9|ALU|(Add, Sub, stl, str, or, and, not, xor) |
+|10|Load| Load from RAM to reg
+|11|Store| Store value from reg to RAM
+|12|Move| Move value between registers
+|13|Jump| Jumps progcounter by some value
+|14|LOAD IMD| Loads a predefined 12 bit number into a reg
 
