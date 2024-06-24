@@ -41,8 +41,8 @@ There is a 4 bit opcode so here is the distribution of instructions
 16 available flags
 - 0 Constant 1 value
 - 1 Greater than
-- 2 Equal to
-- 3 Less than
+- 2 Less than
+- 3 Equal to
 - 4 ?
 - 5 ?
 - 6 ?

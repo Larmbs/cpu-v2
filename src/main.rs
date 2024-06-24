@@ -57,9 +57,9 @@ impl ALU {
     /// This will return unexpected values when overflow occurs
     fn exec(mode: u8, a: u16, b: u16) -> u16 {
         assert!(
-            mode < 10,
+            mode < 11,
             "Mode provided was invalid, modes go from 0 to {} exclusive",
-            10
+            11
         );
 
         match mode {
@@ -71,9 +71,9 @@ impl ALU {
             5 => a | b,  // OR
             6 => a + b,  // Addition
             7 => a - b,  // Subtraction
-            8 => (a > b) as u16,
-            9 => (a == b) as u16,
-            10 => (a < b) as u16,
+            8 => ((a > b) as u16  ) << 3 | ((a < b) as u16) << 2 | ((a == b) as u16) << 1 | 1,
+            9 => a + 1,
+            10 => a - 1,
             _ => will_never_happen(),
         }
     }
