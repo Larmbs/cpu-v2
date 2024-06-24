@@ -10,9 +10,9 @@ Prog_CNT
 - ALU_B
 - ALU_O
 - FLAGS
+- BASE
 - GPR1
 - GPR2
-- GPR3
 
 ## Instruction Set
 | Done | Name | Explanation
@@ -29,11 +29,29 @@ Prog_CNT
 There is a 4 bit opcode so here is the distribution of instructions
 |Range|Label|Instructions|
 |-----|-----|------------|
-|0..9|ALU|(Add, Sub, stl, str, or, and, not, xor) |
-|10|Load| Load from RAM to reg
-|11|Store| Store value from reg to RAM
-|12|Move| Move value between registers
-|13|Jump| Jumps progcounter by some value
-|14|LOAD IMD| Loads a predefined 12 bit number into a reg
-|15|HALT| 
+|0|ALU|(Add, Sub, stl, str, or, and, not, xor) |
+|1|Load| Load from RAM to reg
+|2|Store| Store value from reg to RAM
+|3|Move| Move value between registers
+|4|Jump| Jumps progcounter by some value
+|5|LOAD IMD| Loads a predefined 12 bit number into a reg
+|6|HALT| 
 
+# Flags
+16 available flags
+- 0 Constant 1 value
+- 1 Greater than
+- 2 Equal to
+- 3 Less than
+- 4 ?
+- 5 ?
+- 6 ?
+- 7 ?
+- 8 ?
+- 9 ?
+- 10 ?
+- 11 ?
+- 12 ?
+- 13 ?
+- 14 ?
+- 15 ?

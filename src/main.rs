@@ -73,6 +73,7 @@ impl ALU {
             7 => a - b,  // Subtraction
             8 => (a > b) as u16,
             9 => (a == b) as u16,
+            10 => (a < b) as u16,
             _ => will_never_happen(),
         }
     }
@@ -92,12 +93,12 @@ fn main() {
     let alu_b: u16 = 0; // The B value to be passed into the ALU
     let alu_o: u16 = 0; // The output register of ALU
     let flags: u16 = 0; // Register with a multitude of flags
+    let base: u16 = 0;  // Base addr when using RAM
     let gpr1: u16 = 0;  // General purpose register no unique use
     let gpr2: u16 = 0;  // General purpose register no unique use
-    let gpr3: u16 = 0;  // General purpose register no unique use
 
     // Putting all regs in one array to make things simpler to visualize
-    let mut regs = [0, alu_a, alu_b, alu_o, flags, gpr1, gpr2, gpr3];
+    let mut regs = [0, alu_a, alu_b, alu_o, flags, base, gpr1, gpr2];
 
     // Looping over and over
     loop {
@@ -108,11 +109,12 @@ fn main() {
         let opcode: u8 = ((instr & 0b1111_0000_0000_0000) >> 12) as u8;
 
         match opcode {
-            0..=9 => {
+            0 => {
                 // ALU operation
-                regs[3] = ALU::exec(opcode as u8, regs[1], regs[2]);
+                let mode = instr & 0b1111_1111_1111;
+                regs[3] = ALU::exec(mode as u8, regs[1], regs[2]);
             },
-            10 => {
+            1 => {
                 // LOAD operation
 
                 // Bit-masking out args
@@ -121,7 +123,7 @@ fn main() {
 
                 regs[reg] = ram.read(addr);
             },
-            11 => {
+            2 => {
                 // STORE operation
 
                 // Bit-masking out args
@@ -130,7 +132,7 @@ fn main() {
 
                 ram.write(addr, regs[reg]);
             },
-            12 => {
+            3 => {
                 // MOVE instruction
 
                 // Bit-masking out args
@@ -139,16 +141,18 @@ fn main() {
 
                 regs[reg_recv] = regs[reg_copy];
             },
-            13 => {
+            4 => {
                 // JUMP instruction
-                let flag = regs[4] & 1;
-
+            
                 // Bit-masking jump value
-                let jump_size = instr & 0b0111_1111_1111;
-                let jump_sign = (instr & 0b1000_0000_0000) >> 11;
+                let jump_size = instr & 0b0001_1111_1111;
+                let jump_sign = (instr & 0b0010_0000_0000) >> 9;
+                let jump_type = (instr & 0b1100_0000_0000) >> 10;
+                
+                let res = regs[4] & (1 << jump_type);
 
                 // Jumps if flag is true
-                if flag == 1 {
+                if res == 1 {
                     // Jumping in different direction depending on jump sign
                     match jump_sign {
                         0 => prog_cnt += jump_size,
@@ -157,7 +161,7 @@ fn main() {
                     }
                 }
             },
-            14 => {
+            5 => {
                 // LOAD IMD instruction
                 // 8 bit constant value
                 let value = instr & 0b1111_1111;
@@ -166,7 +170,7 @@ fn main() {
                 regs[reg] = value;
                 
             },
-            15 => {
+            6 => {
                 // HALT Instruction
                 break;
             },
