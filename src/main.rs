@@ -1,3 +1,5 @@
+//! CLI for trying dbexec code
+
 mod comp;
 use std::env;
 use std::fs;
@@ -25,7 +27,8 @@ fn main() {
 
     // Getting the actual code in correct form
     let string = fs::read_to_string(file_path).expect(READ_ERROR);
-    let code: Vec<u16> = string.lines().map(|line| line.trim().parse().expect(FILE_CONTAINS_ERROR)).collect();
+    let mut code: Vec<u16> = string.lines().map(|line| line.trim().parse().expect(FILE_CONTAINS_ERROR)).collect();
+    code.resize(64, 6 << 12);
     let prog: [u16; 64] = code.try_into().expect(FILE_CONTAINS_ERROR);
 
     // Simulating

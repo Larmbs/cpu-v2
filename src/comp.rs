@@ -24,12 +24,12 @@ impl RAM {
     }
     /// Returns a string with data about itself
     fn debug(&self) -> String {
-        let header = format!("|{:3}|{:^7}|\n", "I", "Val");
+        let header = format!("|{:^3}|{:^7}|\n", "I", "Val");
         let bar = "-".repeat(header.len()) + "\n";
         let rows = self.mem.clone()
             .iter()
             .enumerate()
-            .map(|(index, val)| format!("|{:3}|{:^7}|", index + 1, val))
+            .map(|(index, val)| format!("|{:3}|{:^7}|", index, val))
             .collect::<Vec<String>>()
             .join("\n");
         header + &bar + &rows
@@ -177,7 +177,7 @@ pub fn run(prog: [u16; 64]) -> String {
                 // LOAD IMD instruction
                 // 8 bit constant value
                 let value = instr & 0b1111_1111;
-                let reg = (instr & 0b1111_0000_0000) as usize;
+                let reg = ((instr >> 8) & 0b1111) as usize;
 
                 regs[reg] = value;
                 
@@ -193,7 +193,15 @@ pub fn run(prog: [u16; 64]) -> String {
         prog_cnt += 1;
     }
 
-    ram.debug()
+    format!("DroneBoiComputer VM Debugger\n\
+    Created By: Larmbs\n\
+    \n\
+    RAM Values:\n\
+    {}\n\
+    \n\
+    REG Values:\n\
+    {}
+    ", ram.debug(), "Not Done Yet")
 }
 
 #[inline]
