@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "cpu-v2"
+name = "dbvm"
 version = "0.1.0"
